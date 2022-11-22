@@ -2,6 +2,7 @@ from flask import Flask, render_template, request,redirect, url_for,session, mak
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, create_refresh_token,get_jwt_identity,get_jwt;
 import pymysql 
+from datetime import timedelta;
 
 app = Flask(__name__)
 socket_location = "/var/run/mysqld/mysqld.sock"
@@ -10,6 +11,8 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://user:password@172.17.0.
 )
 db = SQLAlchemy()
 db.init_app(app)
+app.config["JWT_SECRET_KEY"] = "super-secret" 
+jwtM = JWTManager(app)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -30,6 +33,9 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+    
+    def getPassword(self):
+        return self.password
 
 with app.app_context():
     db.create_all()
