@@ -1,0 +1,6 @@
+flask
+Flask-SQLAlchemy
+PyMySQL 
+Flask-JWT-Extended
+redis
+rq

@@ -6,9 +6,13 @@ from datetime import timedelta;
 
 app = Flask(__name__)
 socket_location = "/var/run/mysqld/mysqld.sock"
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://user:password@172.17.0.1:3306/db?unix_socket=".format(
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://user:password@172.17.0.1:33063/db?unix_socket=".format(
     'localhost'
 )
+# app.config["SQLALCHEMY_BINDS"] = {
+    # 'users':  "mysql+pymysql://user:password@172.17.0.1:3350/db?unix_socket=".format('localhost')
+# }
+
 db = SQLAlchemy()
 db.init_app(app)
 app.config["JWT_SECRET_KEY"] = "super-secret" 
@@ -84,6 +88,75 @@ def login():
                 return jsonify(token= accessToken, refresh=refreshToken)
         except ValueError as e:
             return render_template('error.html',statusCode=400, message=e)
+
+
+@app.route("/user",methods=["GET"])
+@jwt_required()
+def user():
+    try:
+        return f"<div><h1>ok</h1></div>"
+    except ValueError as e:
+        return render_template('error.html',statusCode=400, message=e)
+
+
+@app.route("/refresh",methods=["POST"])
+@jwt_required(refresh=True)
+def refresh():
+    identity=get_jwt_identity()
+    refreshClaims=get_jwt()
+    return Response (create_access_token(identity=identity,  additional_claims={"user":"abc"}), status=200)         
+
+
+@app.route("/delete",methods=["POST"])
+def delete():
+    request_data = request.get_json()
+    email = request_data["email"]
+    user = User.query.filter_by(email=email).first()
+    if user is None:
+        abort(404)
+    db.session.delete(user)
+    db.session.commit()
+
+    return "deleted"
+
+
+class ElectionParticipant(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    # individual = db.Column(db.String(120), unique=True)
+
+    def __init__(self, name, individual):
+        self.name = name
+        # self.individual = individual
+        # self.id = id
+
+class Election(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    start = db.Column(db.String(256))
+    end = db.Column(db.String(256))
+    # individual = db.Column(Boolean)
+    # participants = db.ARRAY(Integer)
+
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+        # self.individual = individual
+        # self.participants = participants
+
+@app.route("/createParticipan",methods=["POST"])
+@jwt_required()
+def createParticipan():
+    request_data = request.get_json()
+    name = request_data["name"]
+    # individual = request_data["individual"]
+    try:
+        participant = ElectionParticipant(name=name)
+        db.session.add(participant)
+        db.session.commit()
+        return jsonify(name)
+    except ValueError as e:
+            return e
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True) 
