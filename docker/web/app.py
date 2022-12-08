@@ -9,9 +9,6 @@ socket_location = "/var/run/mysqld/mysqld.sock"
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://user:password@172.17.0.1:33063/db?unix_socket=".format(
     'localhost'
 )
-# app.config["SQLALCHEMY_BINDS"] = {
-    # 'users':  "mysql+pymysql://user:password@172.17.0.1:3350/db?unix_socket=".format('localhost')
-# }
 
 db = SQLAlchemy()
 db.init_app(app)
@@ -75,7 +72,6 @@ def register():
 def login():
     if request.method == "GET":
         return "login.html"
-
     else:
         try:
             request_data = request.get_json()

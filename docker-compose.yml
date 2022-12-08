@@ -1,95 +1,94 @@
-version: '2'
+version: "2"
 networks:
   backend:
     driver: bridge
 services:
-    # web:
-    #     build: 
-    #         context: ./docker/web
-    #     ports:
-    #         - "6000:5000"
-    #     volumes:
-    #         - .:/code
-    #     links:
-    #       - db
-    #       # - db2
-    #     networks:
-    #       - backend
-    voting:
-      build: ./docker/voting
-      ports:
-          - "6050:5000"
-      volumes:
-          - .:/code
-      networks:
-        - backend
-    dameon:
-      build: ./docker/dameon
-      ports:
-        - "6105:5000"
-      volumes:
-        - .:/code
-      links:
-        - db
-      networks:
-        - backend
-    db:
-      image: mysql:5.7
-      # restart: always
-      environment:
-        MYSQL_DATABASE: 'db'
-        MYSQL_USER: 'user'
-        MYSQL_PASSWORD: 'password'
-        MYSQL_ROOT_PASSWORD: 'password'
-        DB_HOST: 'mysql'
-      ports:
-        - '33063:3306'
-      expose:
-        - '33063'
-      volumes:
-        - my-db:/var/lib/mysql
-      networks:
-        - backend
-    # web2:
-    #   build:
-    #     context: ./docker/web2
-    #   ports:
-    #       - "3000:5000"
-    #   volumes:
-    #       - .:/code
-    #   links:
-    #     # - db2
-    #     - db
-    #   networks:
-    #     - backend
-    # db2:
-    #   image: mysql:5.7
-    #   # restart: always
-    #   environment:
-    #     MYSQL_DATABASE: 'db2'
-    #     MYSQL_USER: 'user'
-    #     MYSQL_PASSWORD: 'password'
-    #     MYSQL_ROOT_PASSWORD: 'password'
-    #     DB_HOST: 'mysql'
-    #   ports:
-    #     - '33065:3306'
-    #   expose:
-    #     - '33065'
-    #   volumes:
-    #     - my-db:/var/lib/mysql
-    #   networks:
-    #     - backend
-    redis:
-      image: 'bitnami/redis:latest'
-      environment:
-        - ALLOW_EMPTY_PASSWORD=yes
-        - REDIS_PORT_NUMBER=6379
-      ports:
-      - '6379:6379'
-      networks:
-        - backend
+  # web:
+  #     build:
+  #         context: ./docker/web
+  #     ports:
+  #         - "6000:5000"
+  #     volumes:
+  #         - .:/code
+  #     links:
+  #       - db
+  #       # - db2
+  #     networks:
+  #       - backend
+  voting:
+    build: ./docker/voting
+    ports:
+      - "6050:5000"
+    volumes:
+      - .:/code
+    networks:
+      - backend
+  dameon:
+    build: ./docker/dameon
+    ports:
+      - "6105:5000"
+    volumes:
+      - .:/code
+    links:
+      - db
+    networks:
+      - backend
+  db:
+    image: mysql:5.7
+    # restart: always
+    environment:
+      MYSQL_DATABASE: "db"
+      MYSQL_USER: "user"
+      MYSQL_PASSWORD: "password"
+      MYSQL_ROOT_PASSWORD: "password"
+      DB_HOST: "mysql"
+    ports:
+      - "33063:3306"
+    expose:
+      - "33063"
+    volumes:
+      - my-db:/var/lib/mysql
+    networks:
+      - backend
+  # web2:
+  #   build:
+  #     context: ./docker/web2
+  #   ports:
+  #       - "3000:5000"
+  #   volumes:
+  #       - .:/code
+  #   links:
+  #     # - db2
+  #     - db
+  #   networks:
+  #     - backend
+  # db2:
+  #   image: mysql:5.7
+  #   # restart: always
+  #   environment:
+  #     MYSQL_DATABASE: 'db2'
+  #     MYSQL_USER: 'user'
+  #     MYSQL_PASSWORD: 'password'
+  #     MYSQL_ROOT_PASSWORD: 'password'
+  #     DB_HOST: 'mysql'
+  #   ports:
+  #     - '33065:3306'
+  #   expose:
+  #     - '33065'
+  #   volumes:
+  #     - my-db:/var/lib/mysql
+  #   networks:
+  #     - backend
+  redis:
+    image: "bitnami/redis:latest"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_PORT_NUMBER=6379
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
 
-        
 # Names our volume
 volumes:
   my-db:

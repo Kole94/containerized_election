@@ -30,14 +30,12 @@ def hello_geek():
 
     return '<h1>Hello from Flask & Docker</h2>'
 
-@app.route('/get')
-def get_geek():
-    # job = queue.enqueu*
-    # m = r.get('velebit')
-    r.rpush('foo', *[1,2,3,4])
-
-    # r.delete('velebit')
-    return 'm'
+@app.route('/vote',methods=["POST"])
+def vote():
+    request_data = request.get_json()
+    print(request_data["name"])
+    r.rpush('vote', request_data["name"])
+    return request_data["name"]
 
 
 if __name__ == "__main__":
